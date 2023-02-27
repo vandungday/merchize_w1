@@ -1,0 +1,20 @@
+# From base image node
+FROM node:19
+
+# Create app directory
+WORKDIR /app
+
+# Copying all the files from your file system to container file system
+COPY  package*.json ./
+
+# Install all dependencies
+RUN yarn install
+
+# Copy other files too
+COPY ./ .
+
+# Expose the port
+EXPOSE 3030
+
+# Command to run app when intantiate an image
+CMD ["yarn","start"]

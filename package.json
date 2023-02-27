@@ -1,0 +1,20 @@
+{
+  "name": "merchize",
+  "packageManager": "yarn@3.3.1",
+  "scripts": {
+    "start": "nodemon app",
+    "start:prod": "nodemon app"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "joi": "^17.8.3",
+    "mongoose": "^6.10.0",
+    "nodemon": "^2.0.20",
+    "redis": "^4.6.4",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.1"
+  }
+}

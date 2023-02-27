@@ -1,0 +1,63 @@
+version: '3.7'
+
+services:
+  mongodb:
+    container_name: "mongo"
+    image: "mongo:4"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./myapp:/home/node/app
+  redis:
+    container_name: redis
+    image: "redis:4.0.11"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "16379:6379"
+    volumes:
+      - ./myapp:/home/node/app
+      
+  rabbitmq:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.11-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    volumes:
+      - /path/to/rabbitmq-persistence:/bitnami
+  nodejs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3030:3030"
+    environment:
+      - MONGODB_URI=mongodb://root:root@mongodb:27017/merchize?authSource=admin&authMechanism=SCRAM-SHA-1&connectTimeoutMS=5000
+      - REDIS_URI=redis://redis:6379
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
+  workers:
+    build:
+      context: .
+      dockerfile: Dockerfile.2
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - MONGODB_URI=mongodb://root:root@mongodb:27017/merchize?authSource=admin&authMechanism=SCRAM-SHA-1&connectTimeoutMS=5000
+      - REDIS_URI=redis://redis:6379
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
+volumes:
+  mongodb_data:
